@@ -9,7 +9,7 @@ use Autolog\Logger;
 
 class LoggerOverride extends Logger
 {
-    public function toEmail($msg, $level, $subject = "Autolog\Log .. "){
+    public function toEmail($msg, $subject = "Autolog\Log .. "){
     	return func_get_args(); 
     }
     public function toFile($time, $level, $message){

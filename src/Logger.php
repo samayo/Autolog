@@ -51,14 +51,13 @@ class Logger implements \ArrayAccess
         'access.log'  => ''
     ]; 
 
+    private $pdo = null; 
     private $dateFormat = "Y-m-d H:i:s";
 
     public function __construct($config = []){
         if(!empty($config)){
             $this->config = array_merge($this->config, $config); 
         }
-
-        return $this;
     }
 
     public function pdo(\PDO $pdo){
@@ -67,7 +66,7 @@ class Logger implements \ArrayAccess
 
     protected function toSMS(){} // @TODO .. maybe
 
-    protected function toEmail($msg, $level, $subject = "Autolog\Log .. "){
+    protected function toEmail($msg, $subject = "Autolog\Log .. "){
         $email = $this->config["email"]; 
         
         $headers  = "From: " . $email . " \r\n";
@@ -145,7 +144,7 @@ class Logger implements \ArrayAccess
                 break;
 
             case self::EMAIL:
-                $this->toEmail($log->msg, $log->level, $log->title);
+                $this->toEmail($log->msg, $log->title);
                 break;
 
             case self::DATABASE:
@@ -153,12 +152,9 @@ class Logger implements \ArrayAccess
                 break;
 
             case self::SMS:
-                $this->toSMS($log->title, $log->msg); // TODO :
+                // $this->toSMS(); // TODO :
                 break;
             default:
-                throw new LoggerException(sprintf(
-                    "Invalid Argument: %s, please choose appropriate log handler", $handler
-                ));
                 break;
         }
 
@@ -234,7 +230,7 @@ class Logger implements \ArrayAccess
 
     public function logParser(){} //@TODO
 
-    function getConstants(){
+    protected function getConstants(){
         $reflection = new Reflection(__CLASS__); 
         return $reflection->getConstants(); 
     }
