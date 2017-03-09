@@ -91,7 +91,7 @@ class Logger implements \ArrayAccess
             throw new LoggerException("Database connection not found");
         }
 
-        $log = $this->pdo->prepare("INSERT INTO autolog (`time`, `level`, `subject`, `message`) VALUES (NOW(), ?, ?, ?)");
+        $log = $this->pdo->prepare("INSERT INTO logs (`time`, `level`, `subject`, `message`) VALUES (NOW(), ?, ?, ?)");
         $log->execute([$level, $subject, $message]);
     }
 
