@@ -1,10 +1,10 @@
 ## AUTOLOG
 
-A simple PHP class to log your errors, infos or notifications. 
+A simple PHP class to log your info, errors or notifications. 
 
-You can also setup a cronjob, and autolog with detect new logs in /var/log and email/save it in db. 
+You can also setup a cronjob, and autolog will detect new logs in /var/log and log/mail it. 
 
-> This is a simple week-end hack/project to handle a small. It"s still in `¯\_(ツ)_/¯` phase
+> NOTE: This is a lazy-week-end hack/project attempt to handle a small issue. So, it's still in `¯\_(ツ)_/¯` phase
 
 Install
 -----
@@ -26,7 +26,6 @@ A simple example to send your log to your inbox.
 require __DIR__ . "/src/Logger.php"; 
 
 $log = new Autolog\Logger(["email" => "user@domain.tld"]);
-
 
 if($userRegistration){
 	$log->log("new user '$username' just signed up", $log::INFO, $log::EMAIL); 	
@@ -60,9 +59,9 @@ $log::VERBOSE // send every log information
 
 Examples
 -----
-##### Shortest example. 
+##### Simplest example. 
 ```php 
-// if you modify your email from within the class, you can just use this 
+// requires you to change the email inside the class 
 if($something){
 	(new Autolog\Logger)->log("something");
 }
@@ -118,45 +117,42 @@ Handling Exceptions/Errors
 -----
 You can wrap autolog with exception/error handlers 
 ```php 
-// exceptions
 $logger = Autolog\Logger(["email" => "user@example.com"]); 
 
-set_exception_handler(function($e){
+// exceptions
+set_exception_handler(function($e) use($logger){
 	$logger->log($e, $log::ERROR, $log::EMAIL);
 }); 
 
 // errors
-set_error_handler(function($no, $str, $file, $line){
+set_error_handler(function($no, $str, $file, $line) use ($logger){
 	$logger->log("Your site has error: $str in file $file at line $line", $log::ERROR, $log::EMAIL);
 })
 
 ```
 Autolog
 -----
-To get instant log notification when something happens invoke the `autolog()` method as
+To get instant log notification when something happens call the `autolog()` method as
 
 ```php
 $log->autolog(true, $log::EMAIL); 
 ```
-This will periodically send new logs that appear in var/log/ for php/nginx/mysql/apache
-For this to work, you need to follow the below example
-
+This will periodically send new logs that appear in `var/log/` use as shown below:
 ```php
 // in log_mailer.php
-require __DIR__ . "/src/autolog.php";
-$log = new Autolog\Logger([
-    "nginx.log" => "/var/log/nginx/error.log",
-    "php-fpm.log" => "/var/log/php-fpm/error.log",
-    "mariadb.log" => "/var/log/mariadb/mariadb.log",
-    "access.log" => "access.log",
-]);
-
-$log->autolog(true, $log::EMAIL); 
+require __DIR__ . "/src/Logger.php";
+(new Autolog\Logger([
+	"nginx.log" 	=> "/var/log/nginx/error.log",
+	"php-fpm.log" 	=> "/var/log/php-fpm/error.log",
+	"mariadb.log" 	=> "/var/log/mariadb/mariadb.log",
+	"access.log" 	=> "access.txt",
+]))->autolog(true, $log::EMAIL); 
 ```
-In the above example, if you set up a cronjob to execute the file every hour, then 
-autolog with check the timestamp of your error logs, and sends you new logs. 
-It is important to create a simple access.log file so autolog can keep 
-the timestamp of it"s last error checks. 
+Set up a cronjob to execute the above file, then 
+autolog will mail you new error that get logged to nginx/php/mariadb. 
+
+It is important to create a simple `access.txt` file so autolog can keep 
+the timestamp of it's last error checks. 
 
 
 #### License: MIT
