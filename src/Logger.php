@@ -57,6 +57,8 @@ class Logger implements \ArrayAccess
         if(!empty($config)){
             $this->config = array_merge($this->config, $config); 
         }
+
+        return $this;
     }
 
     public function pdo(\PDO $pdo){
