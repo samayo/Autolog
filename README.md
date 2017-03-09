@@ -1,9 +1,11 @@
 ## AUTOLOG
 
-A single class library to log messages, errors to files, database, email, sms which 
-also reads your system log files (php, nginx, mariadb) .. and sends new logs automatically (using a cronjob).   
+A simple PHP class to log your errors, infos or notifications. 
 
-This project is a simple week-end hack/solution to a problem. It needs improvements
+You can also setup a cronjob, and autolog with detect new logs in /var/log and email/save it in db. 
+
+> This is a simple week-end hack/project to handle a small. It"s still in `¯\_(ツ)_/¯` phase
+
 Install
 -----
 
@@ -13,7 +15,7 @@ $ git clone https://github.com/samayo/autolog.git
 ```
 Using composer
 ````bash
-$ php composer.phar require samayo/autolog
+$ php require samayo/autolog
 ````
 
 Usage
@@ -21,25 +23,24 @@ Usage
 #### Simplest Example. 
 A simple example to send your log to your inbox. 
 ```php
-require __DIR__ . '/src/Logger.php'; 
+require __DIR__ . "/src/Logger.php"; 
 
-$log = new Autolog\Logger;
-$log['email'] = 'user@domain.tld'; 
+$log = new Autolog\Logger(["email" => "user@domain.tld"]);
 
-if(/* something happens */){
-	$log->log('something just happened', $log::INFO, $log::EMAIL); 	
+
+if($userRegistration){
+	$log->log("new user '$username' just signed up", $log::INFO, $log::EMAIL); 	
 }
-?>
 ```
 The `log()` method accepts 4 arguments, only the first `$msg` is required, others are optional. 
 ```php 
-// method signature
-function log($msg, $level = $log::INFO, $handler = $log::EMAIL, $verbosity = $log::SIMPLE){}
+log($msg, $level, $handler, $verbosity);
 ```
-If you only pass `$msg`, the log will be considered as type: `INFO`, verbosity: `SIMPLE` and will sent by email.
+If you only pass `$msg`, the log level will be: `$log::INFO`, verbosity: `$log::SIMPLE` and will sent by email.
 
 Options
 -----
+You can select any of these options for the 3 optional arguments
 ```php 
 // to describe the log type
 $log::INFO; // info for simple tasks
@@ -62,52 +63,63 @@ Examples
 ##### Shortest example. 
 ```php 
 // if you modify your email from within the class, you can just use this 
-if($newComment){
-	(new Autolog\Logger)->log('something');
+if($something){
+	(new Autolog\Logger)->log("something");
 }
 
-// if not, you can set up an email in two ways
+// you can also apply configs this way
 $logger = new Autolog\Logger; 
-$logger['email'] = ''; 
+$logger["email"] = "user@domain.tld"; 
 
-// or just pass to the constructor
-$logger = new Autolog\Logger(['email' => '']); 
+// or just pass it to the constructor
+$logger = new Autolog\Logger(["email" => ""]); 
 ```
 
 ##### Logging to file
 ```php
-
-// requires option ['access.log' => 'log/logs.txt']
-$log->log('simple log', $log::INFO, $log::FILE);
+// requires option ["error.log" => "log/logs.txt"]
+$log->log("simple log", $log::INFO, $log::FILE);
 ```
 ##### Sending by email
 ```php
-// requires option ['email' => 'your email']
-$log->log('simple log', $log::INFO, $log::EMAIL);
+// requires option ["email" => "your email"]
+$log->log("simple log", $log::INFO, $log::EMAIL);
 ```
-##### To database
+##### Inserting to database
+Inserting to database is easy, but first you should create database `autolog` with table `logs`
+```sql
+CREATE DATABASE IF NOT EXISTS autolog; 
+use autolog;
+CREATE TABLE `logs` (
+  `id` int(11) DEFAULT '11',
+  `time` datetime DEFAULT NULL,
+  `subject` varchar(255) DEFAULT NULL,
+  `level` varchar(255) DEFAULT NULL,
+  `message` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+```
+Then simply log your error after calling the `pdo()` method and passing it your PDO object
 ```php
-// requires table autolog and columns 'time', 'subject', 'level', 'message'
 $log = new Autolog\Logger;
 $log->pdo(new \PDO(
 	// your pdo host, db, pass here
 )); 
-$log->log('simple log', $log::INFO, $log::DATABASE);
+$log->log("simple log", $log::INFO, $log::DATABASE);
 ```
 #### Method chaining
 Autolog allows you to chain methods to save you time
 ```php
 (new \Autolog\Logger)
-	->pdo(new PDO(
+  ->pdo(new PDO(
 		// your pdo details here
-  ))->log('new user registration', $log::INFO, $log::DATABASE); 
+  ))->log("new user registration", $log::INFO, $log::DATABASE); 
 ```
 Handling Exceptions/Errors
 -----
 You can wrap autolog with exception/error handlers 
 ```php 
 // exceptions
-$logger = Autolog\Logger(['email' => 'user@example.com']); 
+$logger = Autolog\Logger(["email" => "user@example.com"]); 
 
 set_exception_handler(function($e){
 	$logger->log($e, $log::ERROR, $log::EMAIL);
@@ -131,7 +143,7 @@ For this to work, you need to follow the below example
 
 ```php
 // in log_mailer.php
-require __DIR__ . '/src/autolog.php';
+require __DIR__ . "/src/autolog.php";
 $log = new Autolog\Logger([
     "nginx.log" => "/var/log/nginx/error.log",
     "php-fpm.log" => "/var/log/php-fpm/error.log",
@@ -144,7 +156,7 @@ $log->autolog(true, $log::EMAIL);
 In the above example, if you set up a cronjob to execute the file every hour, then 
 autolog with check the timestamp of your error logs, and sends you new logs. 
 It is important to create a simple access.log file so autolog can keep 
-the timestamp of it's last error checks. 
+the timestamp of it"s last error checks. 
 
 
 #### License: MIT
