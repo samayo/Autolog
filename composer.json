@@ -1,0 +1,23 @@
+{
+    "name": "samayo/autolog",
+    "description": "A simple PHP logger library",
+    "keywords": ["log", "error", "notification"],
+    "homepage": "http://github.com/samayo/autolog",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "samayo"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "require-dev":{
+     "phpunit/phpunit":"3.7.*"
+    },
+    "autoload": {
+        "files": [
+            "src/autolog.php"
+        ]
+    }
+}
