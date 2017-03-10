@@ -90,11 +90,12 @@ Inserting to database is easy, but first you should create database `autolog` wi
 CREATE DATABASE IF NOT EXISTS autolog; 
 use autolog;
 CREATE TABLE `logs` (
-  `id` int(11) DEFAULT '11',
+  `id` int(11) DEFAULT '11' AUTO_INCREMENT,
   `time` datetime DEFAULT NULL,
   `subject` varchar(255) DEFAULT NULL,
   `level` varchar(255) DEFAULT NULL,
-  `message` text
+  `message` text,
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 ```
 Then simply log your error after calling the `pdo()` method and passing it your PDO object
