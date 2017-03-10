@@ -1,10 +1,10 @@
 ## AUTOLOG
 
-A simple PHP class to log your info, errors or notifications. 
+A simple PHP class to log your info, errors and notifications. 
 
 You can also setup a cronjob, and autolog will detect new logs in /var/log and log/mail it. 
 
-> NOTE: This is a lazy-week-end hack/project attempt to handle a small issue. So, it's still in `¯\_(ツ)_/¯` phase
+> NOTE: This is a lazy week-end hack/project attempt to handle a small issue. So, it's still in `¯\_(ツ)_/¯` phase
 
 Install
 -----
@@ -88,15 +88,15 @@ $log->log("simple log", $log::INFO, $log::EMAIL);
 Inserting to database is easy, but first you should create database `autolog` with table `logs`
 ```sql
 CREATE DATABASE IF NOT EXISTS autolog; 
-use autolog;
+USE autolog;
 CREATE TABLE `logs` (
-  `id` int(11) DEFAULT '11' AUTO_INCREMENT,
-  `time` datetime DEFAULT NULL,
-  `subject` varchar(255) DEFAULT NULL,
-  `level` varchar(255) DEFAULT NULL,
-  `message` text,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `time` DATETIME DEFAULT NULL,
+  `subject` VARCHAR(255) DEFAULT NULL,
+  `level` VARCHAR(255) DEFAULT NULL,
+  `message` TEXT,
   PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+) ENGINE=INNODB DEFAULT CHARSET=utf8mb4
 ```
 Then simply log your error after calling the `pdo()` method and passing it your PDO object
 ```php
