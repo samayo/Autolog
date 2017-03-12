@@ -54,7 +54,7 @@ $log::SMS; // send to sms
 
 // do you prefer simple/verbose logs
 $log::SIMPLE; // send simplified log
-$log::VERBOSE // send every log information
+$log::VERBOSE; // send every log information
 ``` 
 
 Examples
