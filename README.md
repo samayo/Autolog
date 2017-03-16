@@ -109,7 +109,7 @@ You can quickly chain methods as:
 ```php
 (new \Autolog\Logger)
   ->pdo(new PDO(
-		// your pdo details here
+	// your pdo details here
 ))->log("user: $user modied profile", $log::INFO, $log::DATABASE); 
 ```
 ##### Handling Exceptions/Errors
@@ -139,11 +139,11 @@ This will periodically send new logs that appear in `var/log/` use as shown belo
 // better to create a separate php file ex: log_mailer.php
 require __DIR__ . "/src/Logger.php";
 (new Autolog\Logger([
-	"nginx.log" 	=> "/var/log/nginx/error.log",
-	"php-fpm.log" 	=> "/var/log/php-fpm/error.log",
-	"mariadb.log" 	=> "/var/log/mariadb/mariadb.log",
-	"access.log" 	=> "access.txt",
-	"email"			=> "user@example.com"
+    "nginx.log" 	=> "/var/log/nginx/error.log",
+    "php-fpm.log" 	=> "/var/log/php-fpm/error.log",
+    "mariadb.log" 	=> "/var/log/mariadb/mariadb.log",
+    "access.log" 	=> "access.txt",
+    "email"			=> "user@example.com"
 ]))->watch(true); 
 ```
 Now, you can set a cronjob that executes the above script every hour then 
