@@ -4,7 +4,7 @@ Autolog is a simple PHP class to log your info, errors and notifications.
 
 You can also setup a cronjob, and autolog will detect new logs in /var/log and log/mail it. 
 
-> (!) This was a lazy-week-end-hack attempt to solve a small issue from some years ago, slightly polished. So, it's:  `¯\_(ツ)_/¯`
+> (!) This is slightly-polished lazy-week-end-hack attempt to solve a small issue from some years ago  `¯\_(ツ)_/¯`
 
 Install
 -----
@@ -54,9 +54,6 @@ $log::VERBOSE; // send every log information
  
 ```
 If you only pass `$msg` as `log($msg)` the default will be as: `log($msg, $log::INFO, $log::EMAIL, $log::SIMPLE);` 
------
-
-
 Examples
 -----
 ##### Simplest example. 
