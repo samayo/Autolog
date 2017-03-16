@@ -154,5 +154,4 @@ the timestamp of it's last error checks.
 
 
 ##### License: MIT
-
 [autolog_archive]: http://github.com/samayo/autolog/releases
