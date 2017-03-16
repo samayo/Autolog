@@ -70,7 +70,7 @@ $log = new Autolog\Logger(["email" => ""]);
 
 // the log it!
 if($something){
-	$log->log("something");
+   $log->log("something");
 }
 
 ```
@@ -100,7 +100,7 @@ Then simply log your info/error after calling the `pdo()` method and passing it 
 ```php
 $log = new Autolog\Logger;
 $log->pdo(new \PDO(
-	// your pdo host, db, pass here
+   // your pdo host, db, pass here
 )); 
 $log->log("simple log", $log::ERROR, $log::DATABASE);
 ```
@@ -108,8 +108,8 @@ $log->log("simple log", $log::ERROR, $log::DATABASE);
 You can quickly chain methods as: 
 ```php
 (new \Autolog\Logger)
-  ->pdo(new PDO(
-	// your pdo details here
+   ->pdo(new PDO(
+   // your pdo details here
 ))->log("user: $user modied profile", $log::INFO, $log::DATABASE); 
 ```
 ##### Handling Exceptions/Errors
@@ -120,12 +120,12 @@ $logger = Autolog\Logger(["email" => "user@example.com"]);
 
 // exceptions
 set_exception_handler(function($e) use($logger){
-	$logger->log($e, $log::ERROR, $log::EMAIL);
+   $logger->log($e, $log::ERROR, $log::EMAIL);
 }); 
 
 // errors
 set_error_handler(function($no, $str, $file, $line) use ($logger){
-	$logger->log("Your site has error: $str in file $file at line $line", $log::ERROR, $log::EMAIL);
+   $logger->log("Your site has error: $str in file $file at line $line", $log::ERROR, $log::EMAIL);
 })
 ```
 #### Autologs (via cronjob)
