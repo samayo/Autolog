@@ -26,7 +26,7 @@ require __DIR__ . "/src/Logger.php";
 $log = new Autolog\Logger(["email" => "user@domain.tld"]);
 
 if($userCommented){
-	$log->log("Someone just commented!", $log::INFO, $log::EMAIL); 	
+   $log->log("Someone just commented!", $log::INFO, $log::EMAIL); 	
 }
 ```
 The `$log->log()` method accepts 4 arguments, only the first `$msg` is required, others are optional. 
