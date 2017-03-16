@@ -1,10 +1,8 @@
 ## AUTOLOG
 
-Autolog is a simple PHP class to log your info, errors and notifications. 
+A simple PHP class to help you log/send errors or notifications as they appear
 
-You can also setup a cronjob, and autolog will detect new logs in /var/log and log/mail it. 
-
-> (!) This is slightly-polished lazy-week-end-hack attempt to solve a small issue from some years ago  `¯\_(ツ)_/¯`
+> (!) This is ~polished (lazy|week-end|hack) from some years ago. You know what to do `¯\_(ツ)_/¯`
 
 Install
 -----
@@ -27,15 +25,15 @@ require __DIR__ . "/src/Logger.php";
 
 $log = new Autolog\Logger(["email" => "user@domain.tld"]);
 
-if($userRegistration){
-	$log->log("new user '$username' just signed up", $log::INFO, $log::EMAIL); 	
+if($userRegistered){
+	$log->log("new user just signed up", $log::INFO, $log::EMAIL); 	
 }
 ```
 The `log()` method accepts 4 arguments, only the first `$msg` is required, others are optional. 
 ```php 
-log($msg, $type, $handler, $verbosity);
+function log($msg, $type, $handler, $verbosity){}
 ```
-You can use different options for $type, $handler, $verbosity
+You can use different logtype, handler and verbosity: 
 ```php
 // options for $type  - to describe the log type
 $log::INFO; // info for simple tasks
@@ -51,21 +49,22 @@ $log::SMS; // send to sms
 // do you need the all the info, or relevant (simple)
 $log::SIMPLE; // send simplified log
 $log::VERBOSE; // send every log information
- 
 ```
+
 If you only pass `$msg` as `log($msg)` the default will be as: `log($msg, $log::INFO, $log::EMAIL, $log::SIMPLE);` 
 
 Examples
 -----
-
-##### Simplest example. 
+	
+##### Sending logs to your email
 ```php 
-// although requires you alter the class, and change the email
+// this is the simplest way
+// provided you hardcoded your email inside Logger.php
 if($something){
 	(new Autolog\Logger)->log("something");
 }
 
-// you can also config this way
+// you can config this way
 $logger = new Autolog\Logger; 
 $logger["email"] = "user@domain.tld"; 
 
@@ -77,11 +76,6 @@ $logger = new Autolog\Logger(["email" => ""]);
 ```php
 // requires option ["error.log" => "log/logs.txt"]
 $log->log("simple log", $log::INFO, $log::FILE);
-```
-##### Sending by email
-```php
-// requires option ["email" => "your email"]
-$log->log("simple log", $log::INFO, $log::EMAIL);
 ```
 ##### Inserting to database
 To log into a database, you can create something like this
