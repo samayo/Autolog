@@ -54,7 +54,9 @@ $log::VERBOSE; // send every log information
  
 ```
 If you only pass `$msg` as `log($msg)` the default will be as: `log($msg, $log::INFO, $log::EMAIL, $log::SIMPLE);` 
+
 Examples
+-----
 
 ##### Simplest example. 
 ```php 
@@ -103,7 +105,7 @@ $log->pdo(new \PDO(
 )); 
 $log->log("simple log", $log::ERROR, $log::DATABASE);
 ```
-#### Method chaining
+##### Method chaining
 You can quickly chain methods as: 
 ```php
 (new \Autolog\Logger)
@@ -111,8 +113,8 @@ You can quickly chain methods as:
 		// your pdo details here
   ))->log("new user registration", $log::INFO, $log::DATABASE); 
 ```
-Handling Exceptions/Errors
------
+##### Handling Exceptions/Errors
+
 You can wrap autolog inside an exception/error this way 
 ```php 
 $logger = Autolog\Logger(["email" => "user@example.com"]); 
@@ -127,8 +129,8 @@ set_error_handler(function($no, $str, $file, $line) use ($logger){
 	$logger->log("Your site has error: $str in file $file at line $line", $log::ERROR, $log::EMAIL);
 })
 ```
-Autolog
------
+#### Autolog
+
 To get instant log notification when something happens call the `autolog()` method as
 
 ```php
@@ -152,6 +154,6 @@ It is important to create a simple `access.txt` file so autolog can keep
 the timestamp of it's last error checks. 
 
 
-#### License: MIT
+##### License: MIT
 
 [autolog_archive]: http://github.com/samayo/autolog/releases
