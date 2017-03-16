@@ -26,7 +26,7 @@ require __DIR__ . "/src/Logger.php";
 $log = new Autolog\Logger(["email" => "user@domain.tld"]);
 
 if($userRegistered){
-	$log->log("new user just signed up", $log::INFO, $log::EMAIL); 	
+  $log->log("new user just signed up", $log::INFO, $log::EMAIL); 	
 }
 ```
 The `log()` method accepts 4 arguments, only the first `$msg` is required, others are optional. 
@@ -61,7 +61,7 @@ Examples
 // this is the simplest way
 // provided you hardcoded your email inside Logger.php
 if($something){
-	(new Autolog\Logger)->log("something");
+  (new Autolog\Logger)->log("something");
 }
 
 // you can config this way
@@ -95,7 +95,7 @@ Then simply log your error after calling the `pdo()` method and passing it your 
 ```php
 $log = new Autolog\Logger;
 $log->pdo(new \PDO(
-	// your pdo host, db, pass here
+  // your pdo host, db, pass here
 )); 
 $log->log("simple log", $log::ERROR, $log::DATABASE);
 ```
@@ -104,7 +104,7 @@ You can quickly chain methods as:
 ```php
 (new \Autolog\Logger)
   ->pdo(new PDO(
-		// your pdo details here
+    // your pdo details here
   ))->log("new user registration", $log::INFO, $log::DATABASE); 
 ```
 ##### Handling Exceptions/Errors
@@ -115,12 +115,12 @@ $logger = Autolog\Logger(["email" => "user@example.com"]);
 
 // exceptions
 set_exception_handler(function($e) use($logger){
-	$logger->log($e, $log::ERROR, $log::EMAIL);
+  $logger->log($e, $log::ERROR, $log::EMAIL);
 }); 
 
 // errors
 set_error_handler(function($no, $str, $file, $line) use ($logger){
-	$logger->log("Your site has error: $str in file $file at line $line", $log::ERROR, $log::EMAIL);
+  $logger->log("Your site has error: $str in file $file at line $line", $log::ERROR, $log::EMAIL);
 })
 ```
 #### Autolog
@@ -135,10 +135,10 @@ This will periodically send new logs that appear in `var/log/` use as shown belo
 // better to create a separate php file ex: log_mailer.php
 require __DIR__ . "/src/Logger.php";
 (new Autolog\Logger([
-	"nginx.log" 	=> "/var/log/nginx/error.log",
-	"php-fpm.log" 	=> "/var/log/php-fpm/error.log",
-	"mariadb.log" 	=> "/var/log/mariadb/mariadb.log",
-	"access.log" 	=> "access.txt",
+    "nginx.log" 	=> "/var/log/nginx/error.log",
+    "php-fpm.log" 	=> "/var/log/php-fpm/error.log",
+    "mariadb.log" 	=> "/var/log/mariadb/mariadb.log",
+    "access.log" 	=> "access.txt",
 ]))->autolog(true, $log::EMAIL); 
 ```
 Now, you can set a cronjob that executes the above script every hour then 
