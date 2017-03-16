@@ -55,7 +55,7 @@ $log::VERBOSE; // send every log information
 ```
 If you only pass `$msg` as `log($msg)` the default will be as: `log($msg, $log::INFO, $log::EMAIL, $log::SIMPLE);` 
 Examples
------
+
 ##### Simplest example. 
 ```php 
 // although requires you alter the class, and change the email
