@@ -22,5 +22,5 @@ class LoggerOverride extends Logger
     public function getProperties(){
     	return $this->config; 
     }
-}
+} 
 

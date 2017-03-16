@@ -37,7 +37,6 @@ class Logger implements \ArrayAccess
         self::INFO  => "new info from your logs",
         self::ALERT => "new alert from your logs",
         self::ERROR => "new error from your logs",
-        
         self::SIMPLE  => "SIMPLE",
         self::VERBOSE => "VERBOSE",
     ];
@@ -68,7 +67,6 @@ class Logger implements \ArrayAccess
 
     protected function toEmail($msg, $subject = "Autolog\Log .. "){
         $email = $this->config["email"]; 
-        
         $headers  = "From: " . $email . " \r\n";
         $headers .= "Reply-To: " . $email . " \r\n";
         $headers .= "MIME-Version: 1.0 \r\n";
@@ -91,7 +89,7 @@ class Logger implements \ArrayAccess
             throw new LoggerException("Database connection not found");
         }
 
-        $log = $this->pdo->prepare("INSERT INTO logs (`time`, `level`, `subject`, `message`) VALUES (NOW(), ?, ?, ?)");
+        $log = $this->pdo->prepare("INSERT INTO autolog (`time`, `level`, `subject`, `message`) VALUES (NOW(), ?, ?, ?)");
         $log->execute([$level, $subject, $message]);
     }
 
@@ -168,15 +166,9 @@ class Logger implements \ArrayAccess
         }
     }
 
-    public function autolog($config, $handler = self::EMAIL){
-        switch ($config) {
-            case self::AUTOLOG:
-                $this->Autologger($handler);
-                break;
-
-            default:
-                # code...
-                break;
+    public function watch($watch = false, $handler = self::EMAIL){
+        if($watch){
+            $this->Autologger($handler);
         }
     }
 

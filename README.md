@@ -1,8 +1,8 @@
-## AUTOLOG
+## Autolog
 
-A simple PHP class to help you log/send errors or notifications as they appear
+A lonely PHP class to help log/send your errors, notifications from your app or from `/var/log/` or as they appear 
 
-> (!) This is ~polished (lazy|week-end|hack) from some years ago. You know what to do `¯\_(ツ)_/¯`
+> (!) this is ~polished: lazy  week-end-hack from some years ago. you know what that means `¯\_(ツ)_/¯`
 
 Install
 -----
@@ -19,19 +19,19 @@ $ php require samayo/autolog
 Usage
 -----
 #### Short Example. 
-A simple example to send your log to your inbox. 
+A simple snippet to send a message to your inbox. 
 ```php
 require __DIR__ . "/src/Logger.php"; 
 
 $log = new Autolog\Logger(["email" => "user@domain.tld"]);
 
-if($userRegistered){
-	$log->log("new user just signed up", $log::INFO, $log::EMAIL); 	
+if($userCommented){
+	$log->log("Someone just commented!", $log::INFO, $log::EMAIL); 	
 }
 ```
-The `log()` method accepts 4 arguments, only the first `$msg` is required, others are optional. 
+The `$log->log()` method accepts 4 arguments, only the first `$msg` is required, others are optional. 
 ```php 
-function log($msg, $type, $handler, $verbosity){}
+log($msg, $type, $handler, $verbosity);
 ```
 You can use different logtype, handler and verbosity: 
 ```php
@@ -49,37 +49,42 @@ $log::SMS; // send to sms
 // do you need the all the info, or relevant (simple)
 $log::SIMPLE; // send simplified log
 $log::VERBOSE; // send every log information
+
+// to get log of all error in verbose format
+$log->log($msg, $log::ERROR, $log::EMAIL, $log::VERBOSE);
 ```
 
-If you only pass `$msg` as `log($msg)` the default will be as: `log($msg, $log::INFO, $log::EMAIL, $log::SIMPLE);` 
+Passing only the message as `$log->log($msg)` is possible, and it'll be handled type: INFO, and sent by email 
 
 Examples
 -----
 	
 ##### Sending logs to your email
 ```php 
-// this is the simplest way
-// provided you hardcoded your email inside Logger.php
-if($something){
-	(new Autolog\Logger)->log("something");
-}
-
-// you can config this way
-$logger = new Autolog\Logger; 
-$logger["email"] = "user@domain.tld"; 
+// First you need to setup your email as
+$log = new Autolog\Logger; 
+$log["email"] = "user@domain.tld"; 
 
 // or just pass it to the constructor as
-$logger = new Autolog\Logger(["email" => ""]); 
+$log = new Autolog\Logger(["email" => ""]); 
+
+// the log it!
+if($something){
+	$log->log("something");
+}
+
 ```
 
 ##### Logging to file
+We need to pass out file location for this work
 ```php
-// requires option ["error.log" => "log/logs.txt"]
-$log->log("simple log", $log::INFO, $log::FILE);
+$log = new Autolog\Logger(["error.log" => __DIR__ . "/mylogs.txt"]); 
+$log->log("some $error ", $log::INFO, $log::FILE);
 ```
 ##### Inserting to database
-To log into a database, you can create something like this
+To store your logs in a database, you can create something like this
 ```sql
+// database name can be anything, but table and columns should be as seen below
 CREATE DATABASE IF NOT EXISTS autolog;  
 USE autolog;
 CREATE TABLE `logs` (
@@ -91,7 +96,7 @@ CREATE TABLE `logs` (
   PRIMARY KEY (id)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8mb4
 ```
-Then simply log your error after calling the `pdo()` method and passing it your PDO object
+Then simply log your info/error after calling the `pdo()` method and passing it your PDO object
 ```php
 $log = new Autolog\Logger;
 $log->pdo(new \PDO(
@@ -105,7 +110,7 @@ You can quickly chain methods as:
 (new \Autolog\Logger)
   ->pdo(new PDO(
 		// your pdo details here
-  ))->log("new user registration", $log::INFO, $log::DATABASE); 
+))->log("user: $user modied profile", $log::INFO, $log::DATABASE); 
 ```
 ##### Handling Exceptions/Errors
 
@@ -123,12 +128,11 @@ set_error_handler(function($no, $str, $file, $line) use ($logger){
 	$logger->log("Your site has error: $str in file $file at line $line", $log::ERROR, $log::EMAIL);
 })
 ```
-#### Autolog
-
-To get instant log notification when something happens call the `autolog()` method as
+#### Autologs (via cronjob)
+If you want to get notifid when ex: new errors appear in /var/log/ then use the `watch()`  method
 
 ```php
-$log->autolog(true, $log::EMAIL); 
+$log->watch(true); // true activates the autolog
 ```
 This will periodically send new logs that appear in `var/log/` use as shown below:
 ```php
@@ -139,7 +143,8 @@ require __DIR__ . "/src/Logger.php";
 	"php-fpm.log" 	=> "/var/log/php-fpm/error.log",
 	"mariadb.log" 	=> "/var/log/mariadb/mariadb.log",
 	"access.log" 	=> "access.txt",
-]))->autolog(true, $log::EMAIL); 
+	"email"			=> "user@example.com"
+]))->watch(true); 
 ```
 Now, you can set a cronjob that executes the above script every hour then 
 autolog will mail you new error that get are found to nginx/php/mariadb. 
