@@ -2,7 +2,7 @@
 
 A lonely PHP class to help log/send your errors, notifications from your app or from `/var/log/` or as they appear 
 
-> (!) this is ~polished: lazy  week-end-hack from some years ago. you know what that means `¯\_(ツ)_/¯`
+> (!) this is a slightly polished: lazy weekend-hack/project from some years ago. you know what that means `¯\_(ツ)_/¯`
 
 Install
 -----
