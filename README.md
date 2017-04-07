@@ -72,7 +72,6 @@ $log = new Autolog\Logger(["email" => ""]);
 if($something){
    $log->log("something");
 }
-
 ```
 
 ##### Logging to file
@@ -143,7 +142,7 @@ require __DIR__ . "/src/Logger.php";
 	"php-fpm.log"	=> "/var/log/php-fpm/error.log",
 	"mariadb.log"	=> "/var/log/mariadb/mariadb.log",
 	"access.log"	=> "access.txt",
-	"email"			=> "user@example.com"
+	"email"				=> "user@example.com"
 ]))->watch(true); 
 ```
 Now, you can set a cronjob that executes the above script every hour then 
