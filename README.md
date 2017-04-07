@@ -84,7 +84,7 @@ $log->log("some $error ", $log::INFO, $log::FILE);
 ##### Inserting to database
 To store your logs in a database, you can create something like this
 ```sql
-// database name can be anything, but table and columns should be as seen below
+--- database name can be anything, but table and columns should be as seen below
 CREATE DATABASE IF NOT EXISTS autolog;  
 USE autolog;
 CREATE TABLE `logs` (
@@ -139,11 +139,11 @@ This will periodically send new logs that appear in `var/log/` use as shown belo
 // better to create a separate php file ex: log_mailer.php
 require __DIR__ . "/src/Logger.php";
 (new Autolog\Logger([
-    "nginx.log" 	=> "/var/log/nginx/error.log",
-    "php-fpm.log" 	=> "/var/log/php-fpm/error.log",
-    "mariadb.log" 	=> "/var/log/mariadb/mariadb.log",
-    "access.log" 	=> "access.txt",
-    "email"			=> "user@example.com"
+	"nginx.log"		=> "/var/log/nginx/error.log",
+	"php-fpm.log"	=> "/var/log/php-fpm/error.log",
+	"mariadb.log"	=> "/var/log/mariadb/mariadb.log",
+	"access.log"	=> "access.txt",
+	"email"			=> "user@example.com"
 ]))->watch(true); 
 ```
 Now, you can set a cronjob that executes the above script every hour then 
