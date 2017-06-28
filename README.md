@@ -1,8 +1,6 @@
 ## Autolog
 
-A lonely PHP class to help log/send your errors, notifications from your app or from `/var/log/` or as they appear 
-
-> (!) this is a slightly polished: lazy weekend-hack/project from some years ago. you know what that means `¯\_(ツ)_/¯`
+A PHP class to help log/send your errors, notifications from your app or from `/var/log/` or as they appear 
 
 Install
 -----
@@ -13,7 +11,7 @@ $ git clone https://github.com/samayo/autolog.git
 ```
 Using composer
 ````bash
-$ php require samayo/autolog
+$ composer require samayo/autolog
 ````
 
 Usage
@@ -142,7 +140,7 @@ require __DIR__ . "/src/Logger.php";
   "php-fpm.log"		=> "/var/log/php-fpm/error.log",
   "mariadb.log"		=> "/var/log/mariadb/mariadb.log",
   "access.log"		=> "access.txt",
-  "email"			=> "user@example.com"
+  "email"		=> "user@example.com"
 ]))->watch(true); 
 ```
 Now, you can set a cronjob that executes the above script every hour then 
