@@ -1,3 +1,5 @@
 index.php
 .idea
 /vendor
+
+log/logs.txt
