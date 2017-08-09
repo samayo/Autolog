@@ -17,7 +17,7 @@
     },
     "autoload": {
         "files": [
-            "src/autolog.php"
+            "src/Logger.php"
         ]
     }
 }
