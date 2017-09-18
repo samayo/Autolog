@@ -34,20 +34,20 @@ class Logger implements \ArrayAccess
     const AUTOLOG  = true;
 
     protected $defaultTitle = [
-        self::INFO  => "new info from your logs",
-        self::ALERT => "new alert from your logs",
-        self::ERROR => "new error from your logs",
-        self::SIMPLE  => "SIMPLE",
-        self::VERBOSE => "VERBOSE",
+        self::INFO      => "new info from your logs",
+        self::ALERT     => "new alert from your logs",
+        self::ERROR     => "new error from your logs",
+        self::SIMPLE    => "SIMPLE",
+        self::VERBOSE   => "VERBOSE",
     ];
 
     protected $config = [
-        'email' => 'user@domain.tld', 
-        "nginx.log" => "/var/log/nginx/error.log",
-        "php-fpm.log" => "/var/log/php-fpm/error.log",
-        "mariadb.log" => "/var/log/mariadb/mariadb.log",
-        'error.log'   => '', 
-        'access.log'  => ''
+        'email'         => 'user@domain.tld', 
+        "nginx.log"     => "/var/log/nginx/error.log",
+        "php-fpm.log"   => "/var/log/php-fpm/error.log",
+        "mariadb.log"   => "/var/log/mariadb/mariadb.log",
+        'error.log'     => '', 
+        'access.log'    => ''
     ]; 
 
     private $pdo = null; 
