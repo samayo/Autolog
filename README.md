@@ -1,6 +1,6 @@
 ## Autolog
 
-A PHP class to help log/send your errors, notifications from your app or from `/var/log/` or as they appear 
+A PHP class that to save/log/mail errors or notifications from your app or from `/var/log/` or as they appear 
 
 Install
 -----
@@ -34,21 +34,22 @@ log($msg, $type, $handler, $verbosity);
 You can use different logtype, handler and verbosity: 
 ```php
 // options for $type  - to describe the log type
-$log::INFO; // info for simple tasks
-$log::ERROR; // simple error like 404 .. 
-$log::ALERT; // fatal error or suspecious activity
+$type::INFO; // info for simple tasks
+$type::ERROR; // simple error like 404 .. 
+$type::ALERT; // fatal error or suspecious activity
 
 // Options for $handler - on how to register/save the log message
-$log::EMAIL; // send to email
-$log::FILE; // write to file
-$log::DATABASE; // insert to database 
-$log::SMS; // send to sms
+$handler::EMAIL; // send to email
+$handler::FILE; // write to file
+$handler::DATABASE; // insert to database 
+$handler::SMS; // send to sms
 
 // do you need the all the info, or relevant (simple)
-$log::SIMPLE; // send simplified log
-$log::VERBOSE; // send every log information
+$verbosity::SIMPLE; // send simplified log
+$verbosity::VERBOSE; // send every log information
 
 // to get log of all error in verbose format
+$log = new Autolog\Logger(["email" => "user@domain.tld"]);
 $log->log($msg, $log::ERROR, $log::EMAIL, $log::VERBOSE);
 ```
 
@@ -66,7 +67,7 @@ $log["email"] = "user@domain.tld";
 // or just pass it to the constructor as
 $log = new Autolog\Logger(["email" => ""]); 
 
-// the log it!
+// then log it!
 if($something){
    $log->log("something");
 }
@@ -79,7 +80,7 @@ $log = new Autolog\Logger(["error.log" => __DIR__ . "/mylogs.txt"]);
 $log->log("some $error ", $log::INFO, $log::FILE);
 ```
 ##### Inserting to database
-To store your logs in a database, you can create something like this
+To store your logs in a database, you should create a database with these schema
 ```sql
 --- database name can be anything, but table and columns should be as seen below
 CREATE DATABASE IF NOT EXISTS autolog;  
@@ -102,12 +103,12 @@ $log->pdo(new \PDO(
 $log->log("simple log", $log::ERROR, $log::DATABASE);
 ```
 ##### Method chaining
-You can quickly chain methods as: 
+You can even quickly chain methods as: 
 ```php
 (new \Autolog\Logger)
    ->pdo(new PDO(
    // your pdo details here
-))->log("user: $user modied profile", $log::INFO, $log::DATABASE); 
+))->log("user: $user modified his/her profile", $log::INFO, $log::DATABASE); 
 ```
 ##### Handling Exceptions/Errors
 
@@ -133,18 +134,18 @@ $log->watch(true); // true activates the autolog
 ```
 This will periodically send new logs that appear in `var/log/` use as shown below:
 ```php
-// better to create a separate php file ex: log_mailer.php
+// better to create a separate php file for this script ex: log_mailer.php
 require __DIR__ . "/src/Logger.php";
 (new Autolog\Logger([
-  "nginx.log"		=> "/var/log/nginx/error.log",
-  "php-fpm.log"		=> "/var/log/php-fpm/error.log",
-  "mariadb.log"		=> "/var/log/mariadb/mariadb.log",
-  "access.log"		=> "access.txt",
-  "email"		=> "user@example.com"
+  "nginx.log"  => "/var/log/nginx/error.log",
+  "php-fpm.log"  => "/var/log/php-fpm/error.log",
+  "mariadb.log" => "/var/log/mariadb/mariadb.log",
+  "access.log"  => "access.txt",
+  "email"  => "user@example.com"
 ]))->watch(true); 
 ```
 Now, you can set a cronjob that executes the above script every hour then 
-autolog will mail you new error that get are found to nginx/php/mariadb. 
+autolog will mail you new errors that it finds in /var/log/{nginx/php/mariadb}/. 
 
 It is important to create a simple `access.txt` file so autolog can keep 
 the timestamp of it's last error checks. 
