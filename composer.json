@@ -16,8 +16,8 @@
      "phpunit/phpunit":"3.7.*"
     },
     "autoload": {
-        "psr-4": {
-                "Logger\\" : "src/"
-            }
+      "files":[
+         "src/Logger.php"
+      ]
     }
 }
