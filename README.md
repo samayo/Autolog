@@ -1,6 +1,6 @@
 ## Autolog
 
-A PHP class that to save/log/mail errors or notifications from your app or from `/var/log/` or as they appear 
+A PHP class to save/log/mail errors/notifications from your app or from `/var/log/` or as they appear.
 
 Install
 -----
@@ -17,70 +17,71 @@ $ composer require samayo/autolog
 Usage
 -----
 #### Short Example. 
-A simple snippet to send a message to your inbox. 
+This will send an email whenever you need. 
 ```php
 require __DIR__ . "/src/Logger.php"; 
 
 $log = new Autolog\Logger(["email" => "user@domain.tld"]);
 
-if($userCommented){
-   $log->log("Someone just commented!", $log::INFO, $log::EMAIL); 	
+if($commented){
+   $log->log("someone just commented", $log::INFO, $log::EMAIL); 	
 }
 ```
 The `$log->log()` method accepts 4 arguments, only the first `$msg` is required, others are optional. 
-```php 
+```php
+/**
+ * $msg - the actuall content to send/log
+ * $type - the message type: error, info, notification..
+ * $handler - where to send it (db, email, file log)
+ * $verbosity - log simple or verbose messages
+ */
 log($msg, $type, $handler, $verbosity);
 ```
-You can use different logtype, handler and verbosity: 
+You can use different logtypes, handler and verbosity as:  
 ```php
-// options for $type  - to describe the log type
 $type::INFO; // info for simple tasks
 $type::ERROR; // simple error like 404 .. 
 $type::ALERT; // fatal error or suspecious activity
 
-// Options for $handler - on how to register/save the log message
 $handler::EMAIL; // send to email
 $handler::FILE; // write to file
 $handler::DATABASE; // insert to database 
 $handler::SMS; // send to sms
 
-// do you need the all the info, or relevant (simple)
 $verbosity::SIMPLE; // send simplified log
 $verbosity::VERBOSE; // send every log information
 
-// to get log of all error in verbose format
+// the below will log an error, in verbose format and mail it
 $log = new Autolog\Logger(["email" => "user@domain.tld"]);
 $log->log($msg, $log::ERROR, $log::EMAIL, $log::VERBOSE);
 ```
-
-Passing only the message as `$log->log($msg)` is possible, and it'll be handled type: INFO, and sent by email 
+By passing only the first arg: `$log->log($msg)` the log will be info and email in verbose format
 
 Examples
 -----
 	
-##### Sending logs to your email
+#### Sending logs to your email
 ```php 
-// First you need to setup your email as
 $log = new Autolog\Logger; 
-$log["email"] = "user@domain.tld"; 
+$log["email"] = "user@domain.tld"; // add email
 
-// or just pass it to the constructor as
+// or add your email list this: 
 $log = new Autolog\Logger(["email" => ""]); 
 
 // then log it!
 if($something){
-   $log->log("something");
+   $log->log("something"); // will be sent by email
 }
 ```
 
-##### Logging to file
-We need to pass out file location for this work
+#### Logging to file
+To log in a file, you need to referent a writtable file to `error.log`
 ```php
 $log = new Autolog\Logger(["error.log" => __DIR__ . "/mylogs.txt"]); 
-$log->log("some $error ", $log::INFO, $log::FILE);
+$log->log("ERROR: $error", $log::INFO, $log::FILE); // don't forget $log::FILE
 ```
-##### Inserting to database
-To store your logs in a database, you should create a database with these schema
+#### Inserting to database
+To store your logs in a database, you should create a db with these schema
 ```sql
 --- database name can be anything, but table and columns should be as seen below
 CREATE DATABASE IF NOT EXISTS autolog;  
@@ -102,7 +103,7 @@ $log->pdo(new \PDO(
 )); 
 $log->log("simple log", $log::ERROR, $log::DATABASE);
 ```
-##### Method chaining
+#### Method chaining
 You can even quickly chain methods as: 
 ```php
 (new \Autolog\Logger)
@@ -110,31 +111,35 @@ You can even quickly chain methods as:
    // your pdo details here
 ))->log("user: $user modified his/her profile", $log::INFO, $log::DATABASE); 
 ```
-##### Handling Exceptions/Errors
+#### Handling Exceptions/Errors
 
-You can wrap autolog inside an exception/error this way 
+To log all your exceptions/errors use Autolog as: 
 ```php 
 $logger = Autolog\Logger(["email" => "user@example.com"]); 
 
-// exceptions
+// mail all thrown exceptions
 set_exception_handler(function($e) use($logger){
    $logger->log($e, $log::ERROR, $log::EMAIL);
 }); 
 
-// errors
+// mail all errors
 set_error_handler(function($no, $str, $file, $line) use ($logger){
    $logger->log("Your site has error: $str in file $file at line $line", $log::ERROR, $log::EMAIL);
 })
 ```
-#### Autologs (via cronjob)
-If you want to get notifid when ex: new errors appear in /var/log/ then use the `watch()`  method
+#### Autologs `(via cronjob)`
+To automatically watch and log error from your log folder like: `/var/log/` use `watch()`
 
 ```php
-$log->watch(true); // true activates the autolog
+/**
+ * always watch new errors that appear in your other (nginx, php) log files
+ */ 
+$log->watch(true);
 ```
-This will periodically send new logs that appear in `var/log/` use as shown below:
+This is how you should watch all file and get email when new log appears.
+For this to work, place the `watch()` code in it's own file like: log_mailer.php
 ```php
-// better to create a separate php file for this script ex: log_mailer.php
+// log_mailer.php
 require __DIR__ . "/src/Logger.php";
 (new Autolog\Logger([
   "nginx.log"  => "/var/log/nginx/error.log",
@@ -144,12 +149,12 @@ require __DIR__ . "/src/Logger.php";
   "email"  => "user@example.com"
 ]))->watch(true); 
 ```
-Now, you can set a cronjob that executes the above script every hour then 
-autolog will mail you new errors that it finds in /var/log/{nginx/php/mariadb}/. 
+Now, you can set a cronjob that executes the above script every min/hour then 
+you'll get a new mail everytime a new error is logged in /var/log/... 
 
-It is important to create a simple `access.txt` file so autolog can keep 
-the timestamp of it's last error checks. 
+It is important give the `access.log` a file where the last time like: nginx.log is accessed. 
+This is because to detect new error, you must store the timestamp of the last time we check nginx.log 
+So, if the mtime for nginx file is not the same as we have stored, it means a new log is found ~
 
-
-##### License: MIT
+#### License: MIT
 [autolog_archive]: http://github.com/samayo/autolog/releases
