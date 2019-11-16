@@ -1,6 +1,6 @@
 ## Autolog
 
-A PHP class to save/log/mail errors/notifications from your app or from `/var/log/` or as they appear.
+A PHP class to save/log/mail errors/notifications from your app or from `/var/log/` as they appear.
 
 Install
 -----
@@ -17,36 +17,36 @@ $ composer require samayo/autolog
 Usage
 -----
 #### Short Example. 
-This will send an email whenever you need. 
+To quickly email a user activity log
 ```php
 require __DIR__ . "/src/Logger.php"; 
 
 $log = new Autolog\Logger(["email" => "user@domain.tld"]);
 
-if($commented){
-   $log->log("someone just commented", $log::INFO, $log::EMAIL); 	
+if($comment){
+   $log->log("$user just commented \n $comment", $log::INFO, $log::EMAIL); 	
 }
 ```
-The `$log->log()` method accepts 4 arguments, only the first `$msg` is required, others are optional. 
+The `$log->log()` method accepts 4 arguments, but only the first `$msg` is required. 
 ```php
 /**
- * $msg - the actuall content to send/log
- * $type - the message type: error, info, notification..
- * $handler - where to send it (db, email, file log)
- * $verbosity - log simple or verbose messages
+ * $msg (required) the actual content to send/log
+ * $type (optional) the message type: error, info, notification..
+ * $handler (optional) where to send it (db, email, file log)
+ * $verbosity (optional) log as simple or verbose info
  */
 log($msg, $type, $handler, $verbosity);
 ```
-You can use different logtypes, handler and verbosity as:  
+Available log types, handlers, and verbosity
 ```php
-$type::INFO; // info for simple tasks
-$type::ERROR; // simple error like 404 .. 
-$type::ALERT; // fatal error or suspecious activity
+$type::INFO; // for simple tasks
+$type::ERROR; // for errors ex: 404 .. 
+$type::ALERT; // for fatal errors or suspicious activity
 
 $handler::EMAIL; // send to email
 $handler::FILE; // write to file
 $handler::DATABASE; // insert to database 
-$handler::SMS; // send to sms
+$handler::SMS; // send to sms (not yet implemented)
 
 $verbosity::SIMPLE; // send simplified log
 $verbosity::VERBOSE; // send every log information
@@ -55,7 +55,7 @@ $verbosity::VERBOSE; // send every log information
 $log = new Autolog\Logger(["email" => "user@domain.tld"]);
 $log->log($msg, $log::ERROR, $log::EMAIL, $log::VERBOSE);
 ```
-By passing only the first arg: `$log->log($msg)` the log will be info and email in verbose format
+By passing only the first arg: `$log->log($msg)` the log will tread as `ERROR`, `EMAIL`, `VERBOSE`
 
 Examples
 -----
@@ -66,22 +66,22 @@ $log = new Autolog\Logger;
 $log["email"] = "user@domain.tld"; // add email
 
 // or add your email list this: 
-$log = new Autolog\Logger(["email" => ""]); 
+$log = new Autolog\Logger(["email" => "user@domain.tld"]); 
 
 // then log it!
 if($something){
-   $log->log("something"); // will be sent by email
+   $log->log("something"); // email 'something'
 }
 ```
 
 #### Logging to file
-To log in a file, you need to referent a writtable file to `error.log`
+To log to a file, you need to pass a writable file to `error.log`
 ```php
 $log = new Autolog\Logger(["error.log" => __DIR__ . "/mylogs.txt"]); 
 $log->log("ERROR: $error", $log::INFO, $log::FILE); // don't forget $log::FILE
 ```
 #### Inserting to database
-To store your logs in a database, you should create a db with these schema
+To store your logs in a database, create a db with these schema
 ```sql
 --- database name can be anything, but table and columns should be as seen below
 CREATE DATABASE IF NOT EXISTS autolog;  
@@ -95,7 +95,7 @@ CREATE TABLE `logs` (
   PRIMARY KEY (id)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8mb4
 ```
-Then simply log your info/error after calling the `pdo()` method and passing it your PDO object
+Then log your info/error after calling the `pdo()` PDO object
 ```php
 $log = new Autolog\Logger;
 $log->pdo(new \PDO(
@@ -107,13 +107,11 @@ $log->log("simple log", $log::ERROR, $log::DATABASE);
 You can even quickly chain methods as: 
 ```php
 (new \Autolog\Logger)
-   ->pdo(new PDO(
-   // your pdo details here
-))->log("user: $user modified his/her profile", $log::INFO, $log::DATABASE); 
+   ->pdo(new PDO(/**/))->log("user: $user modified his/her profile", $log::INFO, $log::DATABASE); 
 ```
 #### Handling Exceptions/Errors
 
-To log all your exceptions/errors use Autolog as: 
+To log all your exceptions/errors use example below: 
 ```php 
 $logger = Autolog\Logger(["email" => "user@example.com"]); 
 
@@ -128,16 +126,12 @@ set_error_handler(function($no, $str, $file, $line) use ($logger){
 })
 ```
 #### Autologs `(via cronjob)`
-To automatically watch and log error from your log folder like: `/var/log/` use `watch()`
-
+To automatically detect log file changes and log messages, use `watch()` method. 
 ```php
-/**
- * always watch new errors that appear in your other (nginx, php) log files
- */ 
+// always watch new errors that appear in (nginx, php) log files
 $log->watch(true);
 ```
-This is how you should watch all file and get email when new log appears.
-For this to work, place the `watch()` code in it's own file like: log_mailer.php
+To watch new logs and get notified, place the `watch()` method  in it's own file like: `log_mailer.php`
 ```php
 // log_mailer.php
 require __DIR__ . "/src/Logger.php";
